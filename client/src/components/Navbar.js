@@ -1,20 +1,25 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { useAuth } from '../hooks/useAuth'; // Use the custom hook
+import { useAuth } from '../hooks/useAuth';
 
 const Navbar = () => {
-    const { user, logout } = useAuth(); // Get user and logout function from context
+    const { user, logout } = useAuth();
     const navigate = useNavigate();
+    const [menuOpen, setMenuOpen] = useState(false);
 
     const handleLogout = () => {
-        logout(); // Call logout from context
-        navigate('/login'); // Redirect to login page
+        logout();
+        navigate('/login');
+    };
+
+    const toggleMenu = () => {
+        setMenuOpen(!menuOpen);
     };
 
     return (
         <nav style={styles.navbar}>
             <div style={styles.navContainer}>
-                <Link to={user ? "/dashboard" : "/login"} style={styles.brand}>
+                <Link to="/" style={styles.brand}>
                     AI Flashcards
                 </Link>
                 <ul style={styles.navLinks}>
@@ -25,17 +30,69 @@ const Navbar = () => {
                                 <span style={styles.welcome}>Welcome, {user.name}!</span>
                             </li>
                             <li style={styles.navItem}>
-                                <Link to="/dashboard" style={styles.navLink}>Dashboard</Link>
+                                <Link to="/" style={styles.navLink}>Home</Link>
                             </li>
                             <li style={styles.navItem}>
-                                <button onClick={handleLogout} style={styles.buttonLink}>
-                                    Logout
-                                </button>
+                                <div style={styles.burgerMenuContainer}>
+                                    <button 
+                                        onClick={toggleMenu} 
+                                        style={styles.burgerButton}
+                                        aria-label="Menu"
+                                    >
+                                        <div style={styles.burgerIcon}>
+                                            <span style={styles.burgerLine}></span>
+                                            <span style={styles.burgerLine}></span>
+                                            <span style={styles.burgerLine}></span>
+                                        </div>
+                                    </button>
+                                    
+                                    {menuOpen && (
+                                        <div style={styles.dropdownMenu}>
+                                            <Link 
+                                                to="/dashboard" 
+                                                style={styles.dropdownItem}
+                                                onClick={() => setMenuOpen(false)}
+                                            >
+                                                Dashboard
+                                            </Link>
+                                            <Link 
+                                                to="/flashcards" 
+                                                style={styles.dropdownItem}
+                                                onClick={() => setMenuOpen(false)}
+                                            >
+                                                View Flashcards
+                                            </Link>
+                                            <Link 
+                                                to="/questions" 
+                                                style={styles.dropdownItem}
+                                                onClick={() => setMenuOpen(false)}
+                                            >
+                                                View Questions
+                                            </Link>
+                                            <button 
+                                                onClick={handleLogout} 
+                                                style={styles.dropdownItem}
+                                            >
+                                                Logout
+                                            </button>
+                                            <Link 
+                                                to="/delete-account" 
+                                                style={{...styles.dropdownItem, color: '#ff4d4d'}}
+                                                onClick={() => setMenuOpen(false)}
+                                            >
+                                                Delete Account
+                                            </Link>
+                                        </div>
+                                    )}
+                                </div>
                             </li>
                         </>
                     ) : (
                         // Links shown when user is logged out
                         <>
+                            <li style={styles.navItem}>
+                                <Link to="/" style={styles.navLink}>Home</Link>
+                            </li>
                             <li style={styles.navItem}>
                                 <Link to="/login" style={styles.navLink}>Login</Link>
                             </li>
@@ -50,7 +107,7 @@ const Navbar = () => {
     );
 };
 
-// Basic inline styles (consider moving to a CSS file)
+// Updated styles with burger menu and dropdown
 const styles = {
     navbar: {
         backgroundColor: '#333',
@@ -77,6 +134,7 @@ const styles = {
         display: 'flex',
         margin: 0,
         padding: 0,
+        alignItems: 'center',
     },
     navItem: {
         marginLeft: '20px',
@@ -89,24 +147,69 @@ const styles = {
         padding: '5px 10px',
         transition: 'background-color 0.3s ease',
     },
-     buttonLink: {
+    welcome: {
+        marginRight: '15px',
+        fontStyle: 'italic',
+    },
+    burgerMenuContainer: {
+        position: 'relative',
+    },
+    burgerButton: {
         background: 'none',
         border: 'none',
         color: '#fff',
         cursor: 'pointer',
-        font: 'inherit',
-        padding: '5px 10px',
-         textDecoration: 'none',
-          transition: 'background-color 0.3s ease',
+        padding: '5px',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'center',
     },
-    welcome: {
-        marginRight: '15px',
-        fontStyle: 'italic',
-    }
+    burgerIcon: {
+        display: 'flex',
+        flexDirection: 'column',
+        justifyContent: 'space-between',
+        width: '24px',
+        height: '18px',
+    },
+    burgerLine: {
+        display: 'block',
+        height: '2px',
+        width: '100%',
+        backgroundColor: '#fff',
+        marginBottom: '4px',
+    },
+    dropdownMenu: {
+        position: 'absolute',
+        right: 0,
+        top: '100%',
+        marginTop: '10px',
+        backgroundColor: '#fff',
+        borderRadius: '4px',
+        boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
+        width: '200px',
+        zIndex: 1000,
+    },
+    dropdownItem: {
+        display: 'block',
+        padding: '12px 16px',
+        color: '#333',
+        textDecoration: 'none',
+        borderBottom: '1px solid #eee',
+        cursor: 'pointer',
+        width: '100%',
+        textAlign: 'left',
+        background: 'none',
+        border: 'none',
+        font: 'inherit',
+        transition: 'background-color 0.2s ease',
+    },
 };
 
-// Add hover effect simulation for inline styles (use CSS for real hover)
-styles.navLink[':hover'] = { backgroundColor: '#555' }; // Example, won't work directly inline
-styles.buttonLink[':hover'] = { backgroundColor: '#555' };
+// Add hover effect for dropdown items
+Object.assign(styles.dropdownItem, {
+    ':hover': {
+        backgroundColor: '#f5f5f5',
+    }
+});
 
 export default Navbar;

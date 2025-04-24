@@ -3,6 +3,10 @@ import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-d
 import LoginPage from './pages/LoginPage';
 import SignupPage from './pages/SignupPage';
 import DashboardPage from './pages/DashboardPage';
+import HomePage from './pages/HomePage';
+import FlashcardsPage from './pages/Flashcards';
+import QuestionsPage from './pages/QuestionsPage';
+import DeleteAccountPage from './pages/DeleteAccountPage';
 import Navbar from './components/Navbar'; // Import Navbar
 import PrivateRoute from './components/PrivateRoute'; // Import PrivateRoute
 import { useAuth } from './hooks/useAuth'; // Import useAuth hook
@@ -23,6 +27,7 @@ function App() {
                     {/* Public Routes */}
                     <Route path="/login" element={<LoginPage />} />
                     <Route path="/signup" element={<SignupPage />} />
+                    <Route path="/" element={<HomePage />} />
 
                     {/* Private Routes */}
                     <Route
@@ -33,6 +38,23 @@ function App() {
                             </PrivateRoute>
                         }
                     />
+                     <Route path="/flashcards" element={
+                <PrivateRoute>
+                    <FlashcardsPage />
+                </PrivateRoute>
+            } />
+            
+            <Route path="/questions" element={
+                <PrivateRoute>
+                    <QuestionsPage />
+                </PrivateRoute>
+            } />
+            
+            <Route path="/delete-account" element={
+                <PrivateRoute>
+                    <DeleteAccountPage />
+                </PrivateRoute>
+            } />
 
                     {/* Redirect root path */}
                     {/* If logged in, redirect to dashboard, else to login */}

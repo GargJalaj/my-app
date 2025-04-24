@@ -20,8 +20,8 @@ const Flashcard = ({ item, type }) => (
     </div>
 );
 
-// Component to display a single Set of flashcards
-const FlashcardSetDisplay = ({ set, onDelete }) => {
+// Component to display a single Set of flashcards - for summaries only
+const FlashcardSetDisplay = ({ set, onDelete, showSummariesOnly = false }) => {
     const [isDeleting, setIsDeleting] = useState(false);
 
     const handleDeleteClick = async () => {
@@ -35,7 +35,6 @@ const FlashcardSetDisplay = ({ set, onDelete }) => {
                   alert(`Error deleting set: ${error.response?.data?.msg || error.message}`);
                   setIsDeleting(false);
              }
-             // No need to setIsDeleting(false) on success as component will be removed
         }
     };
 
@@ -63,6 +62,43 @@ const FlashcardSetDisplay = ({ set, onDelete }) => {
                     ))
                 ) : <p>No summaries in this set.</p>}
             </div>
+        </div>
+    );
+};
+
+// Component to display questions only
+const QuestionSetDisplay = ({ set, onDelete }) => {
+    const [isDeleting, setIsDeleting] = useState(false);
+
+    const handleDeleteClick = async () => {
+        if (window.confirm(`Are you sure you want to delete the set for "${set.originalFileName || 'this file'}"?`)) {
+             setIsDeleting(true);
+             try {
+                 await flashcardService.deleteFlashcardSet(set._id);
+                 onDelete(set._id); // Notify parent component to remove from list
+             } catch (error) {
+                  console.error("Failed to delete set:", error);
+                  alert(`Error deleting set: ${error.response?.data?.msg || error.message}`);
+                  setIsDeleting(false);
+             }
+        }
+    };
+
+    return (
+         <div style={styles.flashcardSet}>
+            <div style={styles.setHeader}>
+                 <h3>Questions from: {set.originalFileName || 'Unknown File'}</h3>
+                 <button
+                     onClick={handleDeleteClick}
+                     disabled={isDeleting}
+                     style={styles.deleteButton}
+                     title="Delete this set"
+                  >
+                     {isDeleting ? 'Deleting...' : '🗑️'}
+                 </button>
+            </div>
+
+            <p style={styles.date}><i>Created: {new Date(set.createdAt).toLocaleString()}</i></p>
 
             <div style={styles.section}>
                 <h4>Questions ({set.questions?.length || 0})</h4>
@@ -76,9 +112,8 @@ const FlashcardSetDisplay = ({ set, onDelete }) => {
     );
 };
 
-
-// Main component to fetch and display all sets
-function FlashcardList({ refreshTrigger }) {
+// Main component - can now be used for either summaries or questions
+function FlashcardList({ refreshTrigger, contentType = "summaries" }) {
     const [sets, setSets] = useState([]);
     const [isLoading, setIsLoading] = useState(false);
     const [error, setError] = useState('');
@@ -98,42 +133,61 @@ function FlashcardList({ refreshTrigger }) {
              console.error("Failed to fetch flashcard sets:", err);
              const errMsg = err.response?.data?.msg || err.message || 'Failed to load flashcard sets.';
              setError(errMsg);
-             // If unauthorized, AuthContext might handle redirect, or handle here
              if (err.response?.status === 401) {
                 setError('Session expired or invalid. Please log in again.');
-                // Consider triggering logout from context here
              }
         } finally {
             setIsLoading(false);
         }
     };
 
-
     // useEffect to load sets on mount and when refreshTrigger changes
     useEffect(() => {
-        console.log("FlashcardList: Triggering fetch.");
+        console.log(`${contentType === "summaries" ? "Flashcards" : "Questions"}: Triggering fetch.`);
         loadSets();
-    }, [refreshTrigger]); // Dependency array includes refreshTrigger
+    }, [refreshTrigger, contentType]); 
 
-     // Function to handle deletion callback from FlashcardSetDisplay
+     // Function to handle deletion callback
      const handleSetDeleted = (deletedSetId) => {
          setSets(currentSets => currentSets.filter(set => set._id !== deletedSetId));
      };
 
+    // Filter out sets with no content of desired type
+    const filteredSets = sets.filter(set => {
+        if (contentType === "summaries") {
+            return set.summaries && set.summaries.length > 0;
+        } else {
+            return set.questions && set.questions.length > 0;
+        }
+    });
+
     return (
         <div style={styles.listContainer}>
-            <h3>Your Generated Flashcard Sets</h3>
-            {isLoading && <p>Loading flashcards...</p>}
+            <h3>
+                {contentType === "summaries" 
+                    ? "Your Flashcard Summaries" 
+                    : "Your Practice Questions"}
+            </h3>
+            {isLoading && <p>Loading {contentType}...</p>}
             {error && <p style={styles.errorMessage}>Error: {error}</p>}
-            {!isLoading && !error && sets.length === 0 && (
-                <p>No flashcard sets found. Upload a PDF above to generate some!</p>
+            {!isLoading && !error && filteredSets.length === 0 && (
+                <p>No {contentType} found. Upload a PDF to generate some!</p>
             )}
-            {!isLoading && !error && sets.map(set => (
-                 <FlashcardSetDisplay
-                     key={set._id}
-                     set={set}
-                     onDelete={handleSetDeleted} // Pass deletion handler
-                 />
+            
+            {!isLoading && !error && filteredSets.map(set => (
+                contentType === "summaries" ? (
+                    <FlashcardSetDisplay
+                        key={set._id}
+                        set={set}
+                        onDelete={handleSetDeleted}
+                    />
+                ) : (
+                    <QuestionSetDisplay
+                        key={set._id}
+                        set={set}
+                        onDelete={handleSetDeleted}
+                    />
+                )
             ))}
         </div>
     );
@@ -170,9 +224,6 @@ const styles = {
         fontSize: '0.9em',
         transition: 'background-color 0.2s ease, color 0.2s ease',
     },
-    // Simulate hover/disabled via JS (better with CSS classes)
-    // deleteButton[':hover'] = { backgroundColor: '#ff4d4d', color: '#fff' };
-    // deleteButton[':disabled'] = { opacity: 0.6, cursor: 'not-allowed' };
     date: {
         fontSize: '0.85em',
         color: '#666',

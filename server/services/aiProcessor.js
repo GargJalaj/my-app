@@ -36,7 +36,7 @@ Your task is to return a single, valid JSON object containing exactly two keys: 
 
 1. "summaries": an array of JSON objects. Each object should include:
    - "title": a short descriptive string for the section or concept.
-   - "summary": a concise description of that section.
+   - "summary": a description of that section.
    - "estimatedTime": a string like "2 minutes" estimating reading time.
 
 2. "questions": an array of JSON objects. Each object should include:
