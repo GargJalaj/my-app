@@ -17,67 +17,67 @@ const Navbar = () => {
     };
 
     return (
-        <nav style={styles.navbar}>
-            <div style={styles.navContainer}>
-                <Link to="/" style={styles.brand}>
+        <nav className="bg-gray-800 text-white py-3 mb-5">
+            <div className="max-w-6xl mx-auto px-4 flex justify-between items-center">
+                <Link to="/" className="text-2xl font-bold text-white no-underline">
                     AI Flashcards
                 </Link>
-                <ul style={styles.navLinks}>
+                <ul className="flex items-center list-none m-0 p-0">
                     {user ? (
                         // Links shown when user is logged in
                         <>
-                            <li style={styles.navItem}>
-                                <span style={styles.welcome}>Welcome, {user.name}!</span>
+                            <li className="ml-5 flex items-center">
+                                <span className="mr-4 italic">Welcome, {user.name}!</span>
                             </li>
-                            <li style={styles.navItem}>
-                                <Link to="/" style={styles.navLink}>Home</Link>
+                            <li className="ml-5 flex items-center">
+                                <Link to="/" className="text-white no-underline px-3 py-1 hover:bg-gray-700 rounded transition-colors duration-300">Home</Link>
                             </li>
-                            <li style={styles.navItem}>
-                                <div style={styles.burgerMenuContainer}>
+                            <li className="ml-5 flex items-center">
+                                <div className="relative">
                                     <button 
                                         onClick={toggleMenu} 
-                                        style={styles.burgerButton}
+                                        className="bg-transparent border-0 text-white cursor-pointer p-1 flex items-center justify-center"
                                         aria-label="Menu"
                                     >
-                                        <div style={styles.burgerIcon}>
-                                            <span style={styles.burgerLine}></span>
-                                            <span style={styles.burgerLine}></span>
-                                            <span style={styles.burgerLine}></span>
+                                        <div className="flex flex-col justify-between w-6 h-5">
+                                            <span className="block h-0.5 w-full bg-white mb-1"></span>
+                                            <span className="block h-0.5 w-full bg-white mb-1"></span>
+                                            <span className="block h-0.5 w-full bg-white"></span>
                                         </div>
                                     </button>
                                     
                                     {menuOpen && (
-                                        <div style={styles.dropdownMenu}>
+                                        <div className="absolute right-0 top-full mt-2 bg-white rounded shadow-lg w-48 z-10">
                                             <Link 
                                                 to="/dashboard" 
-                                                style={styles.dropdownItem}
+                                                className="block py-3 px-4 text-gray-800 no-underline border-b border-gray-200 hover:bg-gray-100 transition-colors duration-200"
                                                 onClick={() => setMenuOpen(false)}
                                             >
                                                 Dashboard
                                             </Link>
                                             <Link 
                                                 to="/flashcards" 
-                                                style={styles.dropdownItem}
+                                                className="block py-3 px-4 text-gray-800 no-underline border-b border-gray-200 hover:bg-gray-100 transition-colors duration-200"
                                                 onClick={() => setMenuOpen(false)}
                                             >
                                                 View Flashcards
                                             </Link>
                                             <Link 
                                                 to="/questions" 
-                                                style={styles.dropdownItem}
+                                                className="block py-3 px-4 text-gray-800 no-underline border-b border-gray-200 hover:bg-gray-100 transition-colors duration-200"
                                                 onClick={() => setMenuOpen(false)}
                                             >
                                                 View Questions
                                             </Link>
                                             <button 
                                                 onClick={handleLogout} 
-                                                style={styles.dropdownItem}
+                                                className="block py-3 px-4 text-gray-800 w-full text-left bg-transparent border-0 font-inherit border-b border-gray-200 hover:bg-gray-100 transition-colors duration-200"
                                             >
                                                 Logout
                                             </button>
                                             <Link 
                                                 to="/delete-account" 
-                                                style={{...styles.dropdownItem, color: '#ff4d4d'}}
+                                                className="block py-3 px-4 text-red-500 no-underline hover:bg-gray-100 transition-colors duration-200"
                                                 onClick={() => setMenuOpen(false)}
                                             >
                                                 Delete Account
@@ -90,14 +90,14 @@ const Navbar = () => {
                     ) : (
                         // Links shown when user is logged out
                         <>
-                            <li style={styles.navItem}>
-                                <Link to="/" style={styles.navLink}>Home</Link>
+                            <li className="ml-5 flex items-center">
+                                <Link to="/" className="text-white no-underline px-3 py-1 hover:bg-gray-700 rounded transition-colors duration-300">Home</Link>
                             </li>
-                            <li style={styles.navItem}>
-                                <Link to="/login" style={styles.navLink}>Login</Link>
+                            <li className="ml-5 flex items-center">
+                                <Link to="/login" className="text-white no-underline px-3 py-1 hover:bg-gray-700 rounded transition-colors duration-300">Login</Link>
                             </li>
-                            <li style={styles.navItem}>
-                                <Link to="/signup" style={styles.navLink}>Sign Up</Link>
+                            <li className="ml-5 flex items-center">
+                                <Link to="/signup" className="text-white no-underline px-3 py-1 hover:bg-gray-700 rounded transition-colors duration-300">Sign Up</Link>
                             </li>
                         </>
                     )}
@@ -106,110 +106,5 @@ const Navbar = () => {
         </nav>
     );
 };
-
-// Updated styles with burger menu and dropdown
-const styles = {
-    navbar: {
-        backgroundColor: '#333',
-        color: '#fff',
-        padding: '10px 0',
-        marginBottom: '20px',
-    },
-    navContainer: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        maxWidth: '1100px',
-        margin: '0 auto',
-        padding: '0 20px',
-    },
-    brand: {
-        color: '#fff',
-        textDecoration: 'none',
-        fontSize: '1.5rem',
-        fontWeight: 'bold',
-    },
-    navLinks: {
-        listStyle: 'none',
-        display: 'flex',
-        margin: 0,
-        padding: 0,
-        alignItems: 'center',
-    },
-    navItem: {
-        marginLeft: '20px',
-        display: 'flex',
-        alignItems: 'center',
-    },
-    navLink: {
-        color: '#fff',
-        textDecoration: 'none',
-        padding: '5px 10px',
-        transition: 'background-color 0.3s ease',
-    },
-    welcome: {
-        marginRight: '15px',
-        fontStyle: 'italic',
-    },
-    burgerMenuContainer: {
-        position: 'relative',
-    },
-    burgerButton: {
-        background: 'none',
-        border: 'none',
-        color: '#fff',
-        cursor: 'pointer',
-        padding: '5px',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    burgerIcon: {
-        display: 'flex',
-        flexDirection: 'column',
-        justifyContent: 'space-between',
-        width: '24px',
-        height: '18px',
-    },
-    burgerLine: {
-        display: 'block',
-        height: '2px',
-        width: '100%',
-        backgroundColor: '#fff',
-        marginBottom: '4px',
-    },
-    dropdownMenu: {
-        position: 'absolute',
-        right: 0,
-        top: '100%',
-        marginTop: '10px',
-        backgroundColor: '#fff',
-        borderRadius: '4px',
-        boxShadow: '0 2px 10px rgba(0,0,0,0.2)',
-        width: '200px',
-        zIndex: 1000,
-    },
-    dropdownItem: {
-        display: 'block',
-        padding: '12px 16px',
-        color: '#333',
-        textDecoration: 'none',
-        borderBottom: '1px solid #eee',
-        cursor: 'pointer',
-        width: '100%',
-        textAlign: 'left',
-        background: 'none',
-        border: 'none',
-        font: 'inherit',
-        transition: 'background-color 0.2s ease',
-    },
-};
-
-// Add hover effect for dropdown items
-Object.assign(styles.dropdownItem, {
-    ':hover': {
-        backgroundColor: '#f5f5f5',
-    }
-});
 
 export default Navbar;

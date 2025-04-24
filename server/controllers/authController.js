@@ -120,9 +120,39 @@ const getMe = async (req, res) => {
     });
 };
 
+// @desc    Delete user account
+// @route   DELETE /api/users/delete
+// @access  Private
+const deleteAccount = async (req, res) => {
+    const { password } = req.body;
+
+    try {
+        const user = await User.findById(req.user.id).select('+password');
+
+        if (!user) {
+            return res.status(404).json({ success: false, message: 'User not found' });
+        }
+
+        const isMatch = await bcrypt.compare(password, user.password);
+        if (!isMatch) {
+            return res.status(401).json({ success: false, message: 'Incorrect password' });
+        }
+
+        await user.remove();
+
+        res.status(200).json({ success: true, message: 'User deleted successfully' });
+    } catch (err) {
+        console.error('Delete user error:', err);
+        res.status(500).json({ success: false, message: 'Server error during account deletion' });
+    }
+};
+
+
+
 
 module.exports = {
     registerUser,
     loginUser,
     getMe,
+    deleteAccount,
 };

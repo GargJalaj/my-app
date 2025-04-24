@@ -2,6 +2,7 @@ const FlashcardSet = require('../models/FlashcardSet');
 const { processPdfWithAI } = require('../services/aiProcessor'); // Import the Node.js based AI service
 const fs = require('fs').promises; // Using promises version of fs for async cleanup
 const path = require('path'); // To construct file paths
+const mongoose = require('mongoose');
 
 // @desc    Upload PDF, generate flashcards using AI, and save
 // @route   POST /api/flashcards/upload

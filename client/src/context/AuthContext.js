@@ -87,11 +87,30 @@ export const AuthProvider = ({ children }) => {
         // Optionally navigate user to login page (can be done in component or here)
     };
 
+    const deleteAccount = async () => {
+        try {
+            const response = await authService.deleteAccount(); // Calls the backend to delete the user
+            if (response.success) {
+                logout(); // Clean up local storage and state
+                return true;
+            } else {
+                throw new Error(response.msg || 'Account deletion failed');
+            }
+        } catch (error) {
+            console.error("Delete account error:", error);
+            throw error; // Allow the calling component to handle UI feedback
+        }
+    };
+
     return (
-        <AuthContext.Provider value={{ user, isLoading, login, register, logout }}>
+        <AuthContext.Provider value={{ user, isLoading, login, register, logout, deleteAccount }}>
             {children}
         </AuthContext.Provider>
     );
+
+    
 };
+
+
 
 export default AuthContext;

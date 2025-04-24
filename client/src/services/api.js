@@ -47,6 +47,12 @@ const login = async (userData) => {
     return response.data;
 };
 
+const deleteAccount = async () => {
+    const response = await api.delete('auth/delete'); // adjust the route if your backend uses something else
+    return response.data; // Expects { success: true, msg: 'User deleted' }
+};
+
+
 const logout = () => {
     // Remove user from local storage to log out
     localStorage.removeItem('user');
@@ -99,6 +105,7 @@ const authService = {
     login,
     logout,
     getMe,
+    deleteAccount,
 };
 
 const flashcardService = {

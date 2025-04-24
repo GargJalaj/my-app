@@ -36,3 +36,7 @@ button {
   margin: 0 auto;
   padding: 0 15px; /* Add some horizontal padding */
 }
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
